@@ -1,0 +1,13 @@
+<!-- Наследуем все от файла base.html за исключением секции title and body -->
+{% extends 'base.html' %} 
+
+{% block title %}
+<title>About</title>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Про магазин</h1>
+    <p>Any Text about our internet shop</p>
+</div>    
+{% endblock %}
