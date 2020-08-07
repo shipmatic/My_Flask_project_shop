@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
+from cloudipsp import Api, checkout
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shop.db'
@@ -13,7 +15,10 @@ class Item(db.Model):  # создаем класс Item,   Создаем зап
     price = db.Column(db.Integer, nullable=False)
     isActive = db.Column(db.Boolean, default=True) # default - значение записи по умолчанию
     #text = title = db.Collumn(db.Text)
-
+    
+    def __repr__(self):
+        return self.title
+    
 
 @app.route('/')
 def index():
@@ -46,6 +51,25 @@ def create():
         
     # с помощью render template выводим файл
          return render_template('create.html')
+
+@app.route('/buy/<int:id>')
+def item_buy(id):
+    # с помощью render template выводим файл
+    item= Item.query.get(id)
+    
+    from cloudipsp import Api, Checkout
+    api = Api(merchant_id=1396424,
+          secret_key='test')
+    checkout = Checkout(api=api)
+    data = {
+    "currency": "USD",
+    "amount": str(item.price)+'00'
+    }
+    url = checkout.url(data).get('checkout_url')
+    return redirect(url)
+
+
+
 
 if __name__ == '__main__':
 
